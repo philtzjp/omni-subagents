@@ -1,6 +1,6 @@
 {
   "name": "@philtzjp/omni-subagents",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Claude Code subagents for multimodal capabilities via OpenCode + OpenRouter",
   "license": "MIT",
   "bin": {
