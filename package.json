@@ -4,7 +4,7 @@
   "description": "Claude Code subagents for multimodal capabilities via OpenCode + OpenRouter",
   "license": "MIT",
   "bin": {
-    "omni-subagents": "./bin/cli.js"
+    "omni-subagents": "bin/cli.js"
   },
   "files": [
     "agents/",
@@ -21,6 +21,6 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/philtzjp/omni-subagents"
+    "url": "git+https://github.com/philtzjp/omni-subagents.git"
   }
 }
