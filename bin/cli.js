@@ -15,6 +15,7 @@ const AUTH_PATH = path.join(
   "opencode",
   "auth.json"
 );
+const PKG = require("../package.json");
 const PREFIX = "omni-";
 
 function getAgentFiles() {
@@ -112,6 +113,29 @@ async function install() {
 
   // 3. Copy agent files
   copyAgents();
+
+  // 4. Check for updates
+  checkUpdate();
+}
+
+function checkUpdate() {
+  try {
+    const latest = execFileSync(
+      "npm",
+      ["view", PKG.name, "version"],
+      { stdio: "pipe", timeout: 5000 }
+    )
+      .toString()
+      .trim();
+    if (latest && latest !== PKG.version) {
+      console.log(
+        `\nUpdate available: ${PKG.version} \u2192 ${latest}`
+      );
+      console.log(`  npx ${PKG.name}@latest install`);
+    }
+  } catch {
+    // offline or not yet published, skip silently
+  }
 }
 
 async function setup() {
