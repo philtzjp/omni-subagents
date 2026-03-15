@@ -86,14 +86,48 @@ function copyAgents() {
   console.log(`\n${files.length} subagents installed to ${AGENTS_DST}`);
 }
 
+function installOpencode() {
+  const platform = os.platform();
+  if (platform !== "darwin" && platform !== "linux") {
+    console.log("  Auto-install is only supported on macOS and Linux.");
+    console.log("  See https://opencode.ai/download for other platforms.");
+    return false;
+  }
+  console.log("Installing opencode...\n");
+  try {
+    execFileSync("bash", ["-c", "curl -fsSL https://opencode.ai/install | bash"], {
+      stdio: "inherit",
+      timeout: 60000,
+    });
+    if (hasOpencode()) {
+      console.log("\n\u2713 opencode installed successfully\n");
+      return true;
+    }
+  } catch {
+    // fall through
+  }
+  console.log("\n\u2717 opencode installation failed.");
+  console.log("  Try manually: curl -fsSL https://opencode.ai/install | bash");
+  return false;
+}
+
 async function install() {
   // 1. Check opencode
   if (!hasOpencode()) {
-    console.log("\u2717 opencode CLI not found.");
-    console.log("  Install from https://opencode.ai first, then run again.");
-    process.exit(1);
+    console.log("\u2717 opencode CLI not found.\n");
+    const answer = await prompt("Install opencode now? (Y/n): ");
+    if (answer.toLowerCase() === "n") {
+      console.log("\nSkipped. Install opencode manually, then run again:");
+      console.log("  curl -fsSL https://opencode.ai/install | bash\n");
+      copyAgents();
+      return;
+    }
+    if (!installOpencode()) {
+      process.exit(1);
+    }
+  } else {
+    console.log("\u2713 opencode CLI found\n");
   }
-  console.log("\u2713 opencode CLI found\n");
 
   // 2. Check / ask for OpenRouter key
   if (hasOpenRouterKey()) {
@@ -141,7 +175,7 @@ function checkUpdate() {
 async function setup() {
   if (!hasOpencode()) {
     console.log("\u2717 opencode CLI not found.");
-    console.log("  Install from https://opencode.ai first.");
+    console.log("  Run: curl -fsSL https://opencode.ai/install | bash");
     process.exit(1);
   }
 
